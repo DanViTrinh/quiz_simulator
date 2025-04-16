@@ -11,7 +11,7 @@ MISTAKES_CSV_PATH = "mistakes.csv"
 ORIGINAL_QUIZ_CSV_PATH = "Combined_Quizzes.csv"
 
 
-def generate_quiz(df, num_questions=20):
+def generate_random_quiz(df, num_questions=20):
     selected_questions = df
 
     if num_questions <= len(df):
@@ -23,6 +23,38 @@ def generate_quiz(df, num_questions=20):
     explanations = selected_questions["Explanations"].tolist()
     return questions, answers, explanations
 
+def generate_chosen_quiz(df, choice):
+    if choice < 1 or choice > 7:
+        print("Invalid choice. Exiting.")
+        exit(1)
+
+    match str(choice):
+        case "1":
+            interval = (0, 44)
+        case "2":
+            interval = (44, 98)
+        case "3":
+            interval = (98, 148)
+        case "4":
+            interval = (148, 169)
+        case "5":
+            interval = (169, 188)
+        case "6":
+            interval = (188, 223)
+        case "7":
+            interval = (223, 228)
+        case _:
+            pass
+    
+    if choice == 5 or choice == 7:
+        selected_questions = df[interval[0]:interval[1]]
+        questions = selected_questions["Question"].tolist()
+        answers = selected_questions["Answer"].tolist()
+        explanations = selected_questions["Explanations"].tolist()
+    else:
+        questions, answers, explanations = generate_random_quiz(df[interval[0]:interval[1]], 20)
+    
+    return questions, answers, explanations
 
 def normalize_answer(ans):
     if pd.isna(ans):
@@ -122,6 +154,7 @@ def delete_from_csv_with_questions(questions, filepath):
         writer.writeheader()
         writer.writerows(rows)
 
+
 if __name__ == "__main__":
 
     review = False
@@ -135,10 +168,26 @@ if __name__ == "__main__":
         review = True
     else:
         df = get_quiz_df(ORIGINAL_QUIZ_CSV_PATH)
+    
+    if review_mistakes != "y":
+        random = input(Fore.YELLOW + "Random? [Y/n]: ").strip().lower()
 
-    num_questions = int(input("Number of questions (default is 20): ") or 20)
-
-    questions, answers, explanations = generate_quiz(df, num_questions)
+        if random == "n":
+            print("CHOICES:")
+            print("1. Overview and Applications")
+            print("2. Data Collection & Engineering")
+            print("3. DataOps and DSP")
+            print("4. DSP #2")
+            print("5. Feature Extraction")
+            print("6. Feature Extraction and Basic Learning")
+            print("7. Stat Tests")
+            choice = int(input("Choose a quiz (1-7): "))
+            
+            questions, answers, explanations = generate_chosen_quiz(df, choice)
+        
+        else:
+            num_questions = int(input("Number of questions (default is 20): ") or 20)
+            questions, answers, explanations = generate_random_quiz(df, num_questions)
 
     score, mistakes, correct_questions = ask_questions(questions, answers, explanations)
 
