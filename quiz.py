@@ -13,7 +13,6 @@ MISTAKES_CSV_PATH = os.path.join(script_dir, "mistakes.csv")
 ORIGINAL_QUIZ_CSV_PATH = os.path.join(script_dir, "Combined_Quizzes.csv")
 
 
-
 def generate_random_quiz(df, num_questions=20):
     selected_questions = df
 
@@ -48,15 +47,17 @@ def generate_chosen_quiz(df, choice):
             interval = (223, 228)
         case _:
             pass
-    
+
     if choice == 5 or choice == 7:
-        selected_questions = df[interval[0]:interval[1]]
+        selected_questions = df[interval[0] : interval[1]]
         questions = selected_questions["Question"].tolist()
         answers = selected_questions["Answer"].tolist()
         explanations = selected_questions["Explanations"].tolist()
     else:
-        questions, answers, explanations = generate_random_quiz(df[interval[0]:interval[1]], 20)
-    
+        questions, answers, explanations = generate_random_quiz(
+            df[interval[0] : interval[1]], 20
+        )
+
     return questions, answers, explanations
 
 def normalize_answer(ans):
@@ -74,10 +75,9 @@ def is_correct(correct_ans, submitted_ans):
 
 
 def ask_questions(questions, answers, explanations):
-    score = 0
-
     mistakes = []
     correct_questions = []
+    question_counter = 0
 
     for i, question in enumerate(questions):
         print(
@@ -89,9 +89,13 @@ def ask_questions(questions, answers, explanations):
         print(Style.BRIGHT + f"{question}")
         print()
         user_answer = input(Fore.WHITE + "Your answer: ")
-        if is_correct( answers[i], user_answer):
+
+        if user_answer.lower() == "exit" or user_answer.lower() == "quit":
+            print(Style.BRIGHT + Fore.YELLOW + "Exiting the quiz.")
+            break
+
+        if is_correct(answers[i], user_answer):
             print(Style.BRIGHT + Fore.GREEN + "Correct!")
-            score += 1
             correct_questions.append(question)
         else:
             print(
@@ -107,7 +111,14 @@ def ask_questions(questions, answers, explanations):
                     "Explanations": explanations[i],
                 }
             )
+        question_counter += 1
         print()
+
+    if question_counter == 0:
+        score = 0
+    else:
+        score = len(correct_questions)/ question_counter
+
     return score, mistakes, correct_questions
 
 
@@ -134,7 +145,6 @@ def write_questions_to_csv(questions, filepath):
 
 
 def get_quiz_df(path_to_quiz=ORIGINAL_QUIZ_CSV_PATH):
-
     # Load the CSV file
     try:
         df = pd.read_csv(path_to_quiz)
@@ -146,12 +156,12 @@ def get_quiz_df(path_to_quiz=ORIGINAL_QUIZ_CSV_PATH):
 
 def delete_from_csv_with_questions(questions, filepath):
     # Read the existing data
-    with open(filepath, 'r', newline='') as file:
+    with open(filepath, "r", newline="") as file:
         reader = csv.DictReader(file)
-        rows = [row for row in reader if row['Question'] not in map(str, questions)]
+        rows = [row for row in reader if row["Question"] not in map(str, questions)]
 
     # Write back the filtered rows to the CSV
-    with open(filepath, 'w', newline='') as file:
+    with open(filepath, "w", newline="") as file:
         fieldnames = reader.fieldnames
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
@@ -160,12 +170,12 @@ def delete_from_csv_with_questions(questions, filepath):
 
 # TODO: refactor by adding context manager
 if __name__ == "__main__":
-
     review = False
-    review_mistakes = input(
-        Fore.YELLOW
-        + "Do you want to review your mistakes? [y/N]: "
-    ).strip().lower()
+    review_mistakes = (
+        input(Fore.YELLOW + "Do you want to review your mistakes? [y/N]: ")
+        .strip()
+        .lower()
+    )
 
     if review_mistakes == "y":
         df = get_quiz_df(MISTAKES_CSV_PATH)
@@ -176,7 +186,7 @@ if __name__ == "__main__":
 
     else:
         df = get_quiz_df(ORIGINAL_QUIZ_CSV_PATH)
-    
+
         random = input(Fore.YELLOW + "Random? [Y/n]: ").strip().lower()
 
         if random == "n":
@@ -189,28 +199,31 @@ if __name__ == "__main__":
             print("6. Feature Extraction and Basic Learning")
             print("7. Stat Tests")
             choice = int(input("Choose a quiz (1-7): "))
-            
+
             questions, answers, explanations = generate_chosen_quiz(df, choice)
-        
+
         else:
             num_questions = int(input("Number of questions (default is 20): ") or 20)
             questions, answers, explanations = generate_random_quiz(df, num_questions)
 
+    print(f"\nStarting quiz with {len(questions)} questions.")
     score, mistakes, correct_questions = ask_questions(questions, answers, explanations)
 
     write_questions_to_csv(mistakes, MISTAKES_CSV_PATH)
 
-    print(Style.BRIGHT + f"Your score: {score}/{len(questions)}")
+    print(Style.BRIGHT + f"Your score: {score}")
     if not review:
         print(f"Writing mistakes to {MISTAKES_CSV_PATH}")
     else:
-        delete = input(
-            Fore.YELLOW
-            + "Do you want to delete the correct questions from the mistakes CSV? [y/N]: "
-        ).strip().lower()
+        delete = (
+            input(
+                Fore.YELLOW
+                + "Do you want to delete the correct questions from the mistakes CSV? [y/N]: "
+            )
+            .strip()
+            .lower()
+        )
         if delete == "y":
             print(f"Deleting correct questions from {MISTAKES_CSV_PATH}")
             # Remove correct questions from the mistakes CSV
             delete_from_csv_with_questions(correct_questions, MISTAKES_CSV_PATH)
-
-
