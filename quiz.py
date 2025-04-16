@@ -1,14 +1,17 @@
 import numpy as np
 import pandas as pd
 import csv
+import os
 
 from colorama import Fore, Style, init
 
 # Initialize colorama
 init(autoreset=True)
 
-MISTAKES_CSV_PATH = "mistakes.csv"
-ORIGINAL_QUIZ_CSV_PATH = "Combined_Quizzes.csv"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+MISTAKES_CSV_PATH = os.path.join(script_dir, "mistakes.csv")
+ORIGINAL_QUIZ_CSV_PATH = os.path.join(script_dir, "Combined_Quizzes.csv")
+
 
 
 def generate_random_quiz(df, num_questions=20):
