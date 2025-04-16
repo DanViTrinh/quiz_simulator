@@ -158,6 +158,7 @@ def delete_from_csv_with_questions(questions, filepath):
         writer.writerows(rows)
 
 
+# TODO: refactor by adding context manager
 if __name__ == "__main__":
 
     review = False
@@ -169,10 +170,13 @@ if __name__ == "__main__":
     if review_mistakes == "y":
         df = get_quiz_df(MISTAKES_CSV_PATH)
         review = True
+
+        num_questions = int(input("Number of questions (default is 20): ") or 20)
+        questions, answers, explanations = generate_random_quiz(df, num_questions)
+
     else:
         df = get_quiz_df(ORIGINAL_QUIZ_CSV_PATH)
     
-    if review_mistakes != "y":
         random = input(Fore.YELLOW + "Random? [Y/n]: ").strip().lower()
 
         if random == "n":
