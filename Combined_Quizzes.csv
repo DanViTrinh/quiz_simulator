@@ -534,7 +534,7 @@ D) {20, 20, 25, 25, 30, 35, 40, 45, 50, 50}"," An 80% Winsorization involves rep
  respectively. In this dataset, 10% of 10 is 1, and 10% of 100 is 10. 
 So, we replace the lowest value with the 10th percentile (20) and 
 the highest value with the 90th percentile (50), 
-resulting in {20, 15, 20, 25, 30, 35, 40, 45, 50, 50}.",C
+resulting in {20, 15, 20, 25, 30, 35, 40, 45, 50, 50}.",B
 64,"Which ground truth labeling method would be most appropriate for accurately tracking the sleeping patterns of individuals using wearable devices?
 
 A) Elicitation through predetermined scenarios
