@@ -49,7 +49,7 @@ a)        Data collection --> Model Building --> Segmentation -->Evaluation --> 
 b)        Data collection --> Model Building --> Segmentation --> Feature Extration --> Evaluation
 c)        Model Building --> Segmentation --> Feature Extration --> Data Collection --> Evaluation
 d)        Data collection --> Segmentation --> Feature Extration --> Model Building --> Evaluation
-","The correct order in a sensor data processing pipeline is (d) which typically involves collecting data first, followed by segmentation, feature extraction, model building, and finally, evaluation. This sequence ensures that raw data is processed and refined before building a model and evaluating its performance.",a
+","The correct order in a sensor data processing pipeline is (d) which typically involves collecting data first, followed by segmentation, feature extraction, model building, and finally, evaluation. This sequence ensures that raw data is processed and refined before building a model and evaluating its performance.",d
 9,"Which of the following is incorrect about the advantages of persuasive technology over human persuaders? Persuasive technology 
 a) Is less persistent than human beings 
 b) Offers greater anonymity 
