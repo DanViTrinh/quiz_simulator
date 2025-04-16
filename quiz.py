@@ -19,7 +19,7 @@ def generate_random_quiz(df, num_questions=20):
 
     if num_questions <= len(df):
         # Randomly select questions
-        selected_questions = df.sample(n=num_questions)
+        selected_questions = df.sample(n=num_questions, replace=False)
 
     questions = selected_questions["Question"].tolist()
     answers = selected_questions["Answer"].tolist()
